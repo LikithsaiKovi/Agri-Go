@@ -1,3 +1,5 @@
+
+  <!-- Removed duplicate Weather Forecast (ML Demo) section from the top. Only the one after Sustainability remains. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,18 +28,17 @@
     <nav class="navbar" aria-label="Main navigation">
       <div class="logo">Agri<span>AI</span></div>
       <button class="nav-toggle" aria-label="Open navigation">&#9776;</button>
-     <ul class="nav-links">
+
+    <ul class="nav-links">
   <li><a href="#hero">Home</a></li>
   <li><a href="#ai-applications">AI Solutions</a></li>
   <li><a href="#smart-tech">Smart Technology</a></li>
   <li><a href="#sustainable">Sustainability</a></li>
+  <li><a href="#weather-ml">Weather Forecast (ML Demo)</a></li>
   <li><a href="Dashboard.html">Dashboard</a></li>
   <li><a href="#blog">Insights</a></li>
   <li><a href="#newsletter">Contact</a></li>
-  
-
-
-</ul>
+    </ul>
 
       <button id="mode-toggle" aria-label="Toggle dark/light mode">🌙</button>
     </nav>
@@ -177,10 +178,8 @@
             </div>
           </div>
         </div>
-        
         <div class="sustainable-practices">
           <h3>AI-Powered Sustainable Practices</h3>
-          
           <div class="practice-card">
             <div class="practice-icon">🌱</div>
             <div class="practice-content">
@@ -188,7 +187,6 @@
               <p>AI algorithms analyze field data to optimize planting, fertilizing, and harvesting with pinpoint accuracy, reducing waste and environmental impact.</p>
             </div>
           </div>
-          
           <div class="practice-card">
             <div class="practice-icon">💧</div>
             <div class="practice-content">
@@ -196,7 +194,6 @@
               <p>AI-controlled irrigation systems monitor soil moisture, weather forecasts, and crop needs to deliver exactly the right amount of water when and where it's needed.</p>
             </div>
           </div>
-          
           <div class="practice-card">
             <div class="practice-icon">🐞</div>
             <div class="practice-content">
@@ -204,7 +201,6 @@
               <p>Computer vision and AI detection identify specific pests and diseases, enabling targeted interventions that minimize chemical use and protect beneficial insects.</p>
             </div>
           </div>
-          
           <div class="practice-card">
             <div class="practice-icon">🌍</div>
             <div class="practice-content">
@@ -214,75 +210,135 @@
           </div>
         </div>
       </div>
-      
-
     </section>
 
+    <!-- Weather Forecast (ML Demo) Section - now correctly placed after Sustainability -->
+    <section id="weather-ml" class="section">
+      <h2>Weather Forecast (ML Demo)</h2>
+      <p style="max-width:700px;margin:0 auto 1.5rem auto;text-align:center;font-size:1.1rem;">
+        <b>Try our AI-powered weather prediction tool!</b> Enter your local weather data below to get a machine learning-based forecast, actionable farming advice, and personalized crop recommendations. This demo uses a sample ML model to show how AI can help farmers make smarter decisions based on real-time weather conditions.
+      </p>
+      <form id="weatherForm" style="max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:1rem;">
+        <label for="temperature">Temperature (°C):</label>
+        <input name="temperature" id="temperature" type="number" placeholder="e.g. 32" required />
+        <label for="humidity">Humidity (%):</label>
+        <input name="humidity" id="humidity" type="number" placeholder="e.g. 60" required />
+        <label for="pressure">Pressure (hPa):</label>
+        <input name="pressure" id="pressure" type="number" placeholder="e.g. 1012" required />
+        <button type="submit">Predict Weather</button>
+      </form>
+      <div id="weatherResult" style="margin-top:1rem;font-weight:bold;"></div>
+      <section id="crop-recommendation" class="section" style="display:none;">
+        <h2>Weather-Based Crop Recommendations</h2>
+        <p style="max-width:700px;margin:0 auto 1rem auto;text-align:center;font-size:1rem;">
+          Based on the predicted weather, here are the best crops to grow right now, along with their requirements and expert tips for success:
+        </p>
+        <div id="cropCards" class="cards"></div>
+      </section>
+      <script>
+        // Crop data for demo (expand as needed)
+        const cropData = {
+          "Hot and Dry": [
+            {
+              name: "Millet",
+              img: "images/infographics0.avif",
+              requirements: ["Sandy or loamy soil", "Low water requirement", "Grows well at 25–35°C"],
+              tips: ["Irrigate only when soil is dry", "Use drought-resistant varieties"]
+            },
+            {
+              name: "Sorghum",
+              img: "images/ra.webp",
+              requirements: ["Well-drained soil", "Tolerates high temperature", "Low rainfall"],
+              tips: ["Apply organic manure before sowing", "Control weeds early"]
+            }
+          ],
+          "Humid, Possible Rain": [
+            {
+              name: "Rice",
+              img: "images/farm-layout.jpg",
+              requirements: ["Clayey or loamy soil", "Standing water", "High humidity"],
+              tips: ["Keep fields flooded", "Use disease-resistant varieties"]
+            },
+            {
+              name: "Sugarcane",
+              img: "images/Copy-of-Sales-Team-LinkedIn-Posts-Growers-1024x1024.png.webp",
+              requirements: ["Deep, fertile soil", "Warm and humid climate", "Plenty of water"],
+              tips: ["Apply fertilizer in split doses", "Control pests regularly"]
+            }
+          ],
+          "Cool Weather": [
+            {
+              name: "Wheat",
+              img: "images/modern-farming.webp",
+              requirements: ["Loamy soil", "Cool, dry weather", "Irrigation at critical stages"],
+              tips: ["Sow seeds at proper depth", "Protect from frost"]
+            },
+            {
+              name: "Peas",
+              img: "images/ai.jpg",
+              requirements: ["Well-drained soil", "Cool temperature (15–20°C)", "Moderate watering"],
+              tips: ["Support plants with sticks", "Harvest when pods are full"]
+            }
+          ],
+          "Mild Weather": [
+            {
+              name: "Tomato",
+              img: "images/coww-4.jpg",
+              requirements: ["Loamy, well-drained soil", "20–27°C", "Regular watering"],
+              tips: ["Stake plants for support", "Use mulch to retain moisture"]
+            },
+            {
+              name: "Maize",
+              img: "images/IOT-smart-farming-2.webp",
+              requirements: ["Fertile, well-drained soil", "Warm weather", "Adequate sunlight"],
+              tips: ["Apply fertilizer at sowing", "Control weeds early"]
+            }
+          ]
+        };
 
+        document.getElementById('weatherForm').onsubmit = async function(e) {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData.entries());
+          const res = await fetch('/get-weather', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await res.json();
+          document.getElementById('weatherResult').innerHTML =
+            result.description ?
+              `<b>Forecast:</b> ${result.description}<br>` +
+              `<b>Advice:</b> ${result.advice}<br>` +
+              `<b>Temperature:</b> ${result.temperature}°C<br>` +
+              `<b>Humidity:</b> ${result.humidity}%<br>` +
+              `<b>Pressure:</b> ${result.pressure} hPa` :
+            (result.forecast !== undefined ? ('Forecast: ' + result.forecast) : 'Error: ' + (result.error || 'Unknown error'));
 
-
-
-    <section id="blog" class="section">
-      <h2>AI in Agri: News & Insights</h2>
-      <div id="blog-articles" class="blog-list" aria-live="polite">
-        <div class="blog-article">
-          <div class="blog-img-container">
-            <img src="images/The-concept-of-digital-agriculture-10.png" alt="Digital farming concept image">
-          </div>
-          <h3>Artificial Intelligence in Indian Agriculture</h3>
-          <p>
-            <strong>Authors:</strong> Sharma, Yogita; Priyadarshi, Shubham<br>
-            <strong>Published:</strong> 2024/03/14<br>
-            <strong>Pages:</strong> 180-186
-          </p>
-          <p>
-            This chapter discusses the role and impact of artificial intelligence in Indian agriculture, highlighting recent advancements and applications that are transforming the sector.
-          </p>
-          <a href="#" tabindex="-1" aria-disabled="true" style="pointer-events:none;color:gray;">Read More......</a>
-        </div>
-        <div class="blog-article">
-            <div class="blog-img-container">
-              <img src="images/Robotic-Planter.png" alt="Robotics in precision farming">
-            </div>
-            <h3>The Rise of AI-Powered Robotics in Precision Farming</h3>
-            <p>
-              <strong>Author:</strong> AgriTech Today<br>
-              <strong>Published:</strong> 2025/04/20
-            </p>
-            <p>
-              Exploring how autonomous robots, guided by AI, are enhancing efficiency and precision in tasks like planting, weeding, and harvesting.
-            </p>
-            <a href="#" tabindex="-1" aria-disabled="true" style="pointer-events:none;color:gray;">Read More..... </a>
-          </div>
-          <div class="blog-article">
-            <div class="blog-img-container">
-              <img src="images/ai.jpg" alt="Robotics in precision farming">
-            </div>
-            <h3>7 Applications of AI in Agriculture </h3>
-            <p>
-              <strong>Author:</strong> Claudia Yun<br>
-              <strong>Published:</strong> 2025/01/06
-            </p>
-            <p>
-              This text describes the transformative impact of Artificial Intelligence (AI) on modern agriculture, highlighting its potential to address global food demand and resource constraints. It details how AI applications, such as automated weed control, livestock health monitoring, and predictive analysis, are enhancing efficiency and sustainability.
-            </p>
-            <a href="#" tabindex="-1" aria-disabled="true" style="pointer-events:none;color:gray;">Read More...... </a>
-          </div>
-        <div class="loader"> more articles coming soon...</div>
-      </div>
+          // Show crop recommendations based on forecast
+          const cropSection = document.getElementById('crop-recommendation');
+          const cropCards = document.getElementById('cropCards');
+          cropCards.innerHTML = '';
+          if (result.description && cropData[result.description]) {
+            cropSection.style.display = '';
+            cropData[result.description].forEach(crop => {
+              cropCards.innerHTML += `
+                <div class="card card-animated" style="max-width:340px;">
+                  <img src="${crop.img}" alt="${crop.name}" style="height:180px;object-fit:cover;">
+                  <h3>${crop.name}</h3>
+                  <b>Requirements:</b>
+                  <ul>${crop.requirements.map(r => `<li>${r}</li>`).join('')}</ul>
+                  <b>Tips:</b>
+                  <ul>${crop.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+                </div>
+              `;
+            });
+          } else {
+            cropSection.style.display = 'none';
+          }
+        };
+      </script>
     </section>
-
-<section id="drone-map" class="section">
-  <h2>🛰️ Smart Drone Route Simulation</h2>
-  <div class="map-sim-wrapper">
-  <img src="images/farm-layout.jpg" alt="Farm Map" class="farm-map" />
-    <div class="drone" id="drone"></div>
-    <div class="zone zone1">Zone 1<br><span>Sprayed</span></div>
-    <div class="zone zone2">Zone 2<br><span>Needs Irrigation</span></div>
-    <div class="zone zone3">Zone 3<br><span>Healthy</span></div>
-  </div>
-</section>
-
 
     <section id="testimonials" class="section alt-bg">
       <h2>Success Stories with AI Farming</h2>

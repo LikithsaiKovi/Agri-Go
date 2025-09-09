@@ -1,12 +1,26 @@
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+
+// Route to connect to ML API for weather prediction
+app.post('/get-weather', async (req, res) => {
+  try {
+    const response = await axios.post('http://127.0.0.1:5000/predict-weather', req.body);
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: 'ML API error', details: err.message });
+  }
+});
 
 
 // Connect to MongoDB
@@ -20,7 +34,7 @@ app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/recommend-crop', require('./routes/crop'));
 app.use('/api/iot-data', require('./routes/iot'));
 app.use('/api/weather', require('./routes/weather'));
-app.use('/api/chatbot', require('./routes/chatbot'));
+app.use('/api/chatbot', require('./routes/chatbot_hf'));
 
 const path = require('path');
 
