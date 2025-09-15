@@ -34,7 +34,7 @@ app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/recommend-crop', require('./routes/crop'));
 app.use('/api/iot-data', require('./routes/iot'));
 app.use('/api/weather', require('./routes/weather'));
-app.use('/api/chatbot', require('./routes/chatbot_hf'));
+app.use('/api/chatbot', require('./routes/chatbot'));
 
 const path = require('path');
 
