@@ -1,3 +1,25 @@
+// ======================= Theme Toggle (Light/Dark) =========================
+const modeToggle = document.getElementById('mode-toggle');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const savedTheme = localStorage.getItem('theme');
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  modeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// Initial theme
+if (savedTheme) {
+  setTheme(savedTheme);
+} else {
+  setTheme(prefersDark ? 'dark' : 'light');
+}
+
+modeToggle?.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
 // ======================= Loading Screen =========================
 window.addEventListener('load', () => {
   const loading = document.getElementById('loading');
@@ -61,23 +83,7 @@ function updateActiveNav() {
 
 window.addEventListener('scroll', updateActiveNav);
 
-// ======================== Dark/Light Mode ===========================
-const modeToggle = document.getElementById('mode-toggle');
-const setTheme = (theme) => {
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  modeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-};
-
-modeToggle?.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
-  setTheme(current === 'light' ? 'dark' : 'light');
-});
-
-(function initTheme() {
-  const saved = localStorage.getItem('theme');
-  setTheme(saved === 'dark' ? 'dark' : 'light');
-})();
+// Removed duplicate dark/light mode code to fix redeclaration error.
 
 // ======================= IoT Data Simulation ========================
 function randomIoT() {
