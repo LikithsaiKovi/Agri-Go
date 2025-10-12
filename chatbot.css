@@ -1,0 +1,133 @@
+/* Chatbot Container Styles */
+.chatbot-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+/* Response Content Styles */
+.chat-response-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* Table Styles */
+.table-responsive {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
+}
+
+.chat-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  background: var(--bg-alt);
+}
+
+.chat-table th,
+.chat-table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.chat-table th {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.chat-table tr:nth-child(even) {
+  background: var(--card-bg);
+}
+
+.chat-table tr:hover {
+  background: var(--card-hover);
+}
+
+/* List Styles */
+.chat-list,
+.chat-ordered-list {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.chat-list li,
+.chat-ordered-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Code and Measurement Styles */
+.chat-code {
+  background: var(--bg-alt);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+  font-family: monospace;
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+/* Highlighted Terms */
+.highlight {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Loading State */
+.thinking {
+  color: var(--accent);
+  font-weight: 500;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Error State */
+.chat-error {
+  color: #e53935;
+  font-weight: 500;
+}
+
+/* Spacing and Typography */
+.chat-response-content > * + * {
+  margin-top: 1rem;
+}
+
+.chat-response-content h2,
+.chat-response-content h3 {
+  color: var(--primary);
+  margin: 1.5rem 0 1rem;
+  font-weight: 600;
+}
+
+.chat-response-content p {
+  margin: 0.8rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chatbot-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .chat-table {
+    font-size: 0.9rem;
+  }
+
+  .chat-table th,
+  .chat-table td {
+    padding: 0.6rem 0.8rem;
+  }
+}
