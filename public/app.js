@@ -360,25 +360,69 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
 
   if (!message) return;
 
-  output.textContent = "🧠 Thinking...";
+  output.innerHTML = `<div class="thinking">🧠 Thinking...</div>`;
 
   try {
     const res = await fetch('http://localhost:5050/api/chatbot', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ message }) // ✅ "message" must match
-});
-
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
 
     const data = await res.json();
 
     if (res.ok) {
-      output.textContent = `🤖 ${data.reply}`;
+      // Convert the response to proper HTML with markdown-it
+      const md = window.markdownit({
+        html: true,
+        linkify: true,
+        typographer: true,
+        breaks: true
+      });
+
+      // Custom table renderer to ensure tables are responsive
+      const defaultRender = md.renderer.rules.table_open || function(tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+
+      md.renderer.rules.table_open = function(tokens, idx, options, env, self) {
+        return '<div class="table-responsive"><table class="chat-table">';
+      };
+
+      md.renderer.rules.table_close = function(tokens, idx, options, env, self) {
+        return '</table></div>';
+      };
+
+      // Render the markdown response
+      const htmlContent = md.render(data.reply);
+      output.innerHTML = `<div class="chat-response-content">${htmlContent}</div>`;
+
+      // Apply custom styling to specific elements
+      output.querySelectorAll('table').forEach(table => {
+        table.classList.add('chat-table');
+      });
+      
+      output.querySelectorAll('ul').forEach(list => {
+        list.classList.add('chat-list');
+      });
+      
+      output.querySelectorAll('ol').forEach(list => {
+        list.classList.add('chat-ordered-list');
+      });
+
+      // Highlight important terms
+      output.innerHTML = output.innerHTML.replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>');
+
+      // Style code blocks and inline code
+      output.querySelectorAll('code').forEach(code => {
+        code.classList.add('chat-code');
+      });
+
     } else {
-      output.textContent = `❌ ${data.error || "Error from AI"}`;
+      output.innerHTML = `<div class="chat-error">❌ ${data.error || "Error from AI"}</div>`;
     }
   } catch (err) {
-    output.textContent = "❌ Unable to load. Check console.";
+    output.innerHTML = `<div class="chat-error">❌ Unable to load. Check console.</div>`;
     console.error("Chat error:", err);
   }
 
