@@ -5,4 +5,7 @@ __pycache__/
 .vscode/
 *.pyc
 dist/
-build/
+build/.venv310/
+venv/
+__pycache__/
+*.pyc
