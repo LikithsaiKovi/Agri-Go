@@ -1,6 +1,6 @@
 ## Features
 - Weather prediction and crop recommendation using ML
-- AI-powered chatbot (OpenAI GPT)
+- AI-powered chatbot (Grok cloud)
 - Newsletter subscription
 - Success stories and educational content
 
@@ -8,7 +8,7 @@
 - Node.js (v16+ recommended)
 - Python 3.8+
 - MongoDB Atlas account (or local MongoDB)
-- OpenAI API key
+- Grok Cloud API key
 
 ## Setup Instructions
 
@@ -26,9 +26,9 @@ npm install
 ### 3. Set Up Environment Variables
 Create a `.env` file in the project root with the following (fill in your values):
 ```
-MONGODB_URI=your-mongodb-uri
+MONGODB_URI=your-mongodb-url
 PORT=5050
-OPENAI_API_KEY=your-openai-api-key
+GROK_API_KEY=your-grok-api-key
 ```
 
 ### 4. Set Up the ML API (Python)
@@ -37,7 +37,7 @@ cd ml_api
 pip install -r requirements.txt
 python app.py
 ```
-- The ML API will run on `http://127.0.0.1:5000` by default.
+- The ML API will run on `http://127.0.0.1:5050` by default.
 
 ### 5. Start the Node.js Backend
 In a new terminal, from the project root:
