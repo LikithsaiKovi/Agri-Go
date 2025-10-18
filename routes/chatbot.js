@@ -112,7 +112,7 @@ Follow these strict guidelines:
 5. **Response Behavior**
    - Always answer exactly what the user asked — no off-topic elaboration.
    - Do not repeat or restate the question.
-   - Adapt structure and detail depth automatically based on the user’s intent.
+   - Adapt structure and detail depth automatically based on the user's intent.
 
 Your goal: Deliver **high-impact, data-driven, and field-practical agricultural advice** that can be immediately applied by a farmer or agritech user.`;
 
@@ -166,5 +166,4 @@ router.post('/', async (req, res) => {
     return res.status(status).json({ error: msg });
   }
 });
-
 module.exports = router;

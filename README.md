@@ -66,4 +66,3 @@ http://localhost:5050
 - If you see connection errors, check that both servers are running and ports match the code.
 - For MongoDB issues, verify your URI and network access.
 - For OpenAI errors, check your API key and usage limits.
-
