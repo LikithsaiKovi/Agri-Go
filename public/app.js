@@ -3,6 +3,13 @@ const modeToggle = document.getElementById('mode-toggle');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const savedTheme = localStorage.getItem('theme');
 
+// Central API base: use Railway backend in production, local origin for dev.
+const API_BASE = (() => {
+  const origin = window.location.origin;
+  if (origin.includes('agrigo.in')) return 'https://agri-go-production.up.railway.app';
+  return origin;
+})();
+
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
@@ -268,8 +275,7 @@ document.getElementById('newsletter-form')?.addEventListener('submit', async (e)
   if (!email) return;
 
   try {
-  const apiUrl = window.location.origin;
-  const res = await fetch(`${apiUrl}/api/newsletter`, {
+  const res = await fetch(`${API_BASE}/api/newsletter`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
@@ -297,8 +303,7 @@ document.getElementById('recommend-btn')?.addEventListener('click', async () => 
   resultEl.textContent = "🔄 Getting recommendations...";
 
   try {
-    const apiUrl = window.location.origin;
-    const response = await fetch(`${apiUrl}/api/recommend-crop`, {
+    const response = await fetch(`${API_BASE}/api/recommend-crop`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ soil, climate })
@@ -320,8 +325,7 @@ document.getElementById('recommend-btn')?.addEventListener('click', async () => 
 });
 async function fetchSensorData() {
   try {
-    const apiUrl = window.location.origin;
-    const res = await fetch(`${apiUrl}/api/iot-data`);
+    const res = await fetch(`${API_BASE}/api/iot-data`);
     const data = await res.json();
 
     document.getElementById('temperature').textContent = data.temperature?.toFixed(1) ?? '--';
@@ -366,8 +370,7 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
   output.innerHTML = `<div class="thinking">🧠 Thinking...</div>`;
 
   try {
-    const apiUrl = window.location.origin;
-    const res = await fetch(`${apiUrl}/api/chatbot`, {
+    const res = await fetch(`${API_BASE}/api/chatbot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message })
