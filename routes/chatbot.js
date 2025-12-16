@@ -4,7 +4,8 @@ const axios = require('axios');
 
 // Use Groq as default provider (much faster and cheaper than OpenAI)
 const MODEL_NAME = process.env.MODEL_NAME || 'mixtral-8x7b-32768';
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_API_KEY = process.env.GROK_API_KEY || process.env.GROQ_API_KEY; // Support both env var names
+const GROQ_API_URL = process.env.GROQ_API_URL || 'https://api.groq.com/openai/v1';
 
 // Function to format response with clean table structure
 function formatResponse(text) {
@@ -142,7 +143,7 @@ router.post('/', async (req, res) => {
       max_tokens: 2000
     };
 
-    const groqResp = await axios.post('https://api.groq.com/openai/v1/chat/completions', payload, {
+    const groqResp = await axios.post(`${GROQ_API_URL}/chat/completions`, payload, {
       headers: {
         'Authorization': `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json'
