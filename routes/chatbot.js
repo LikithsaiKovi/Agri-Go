@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-const MODEL_NAME = process.env.MODEL_NAME || 'openai/gpt-oos-120b';
+// Use Groq as default provider (much faster and cheaper than OpenAI)
+const MODEL_NAME = process.env.MODEL_NAME || 'mixtral-8x7b-32768';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // Function to format response with clean table structure
 function formatResponse(text) {
@@ -121,16 +123,13 @@ router.post('/', async (req, res) => {
   const { message } = req.body;
 
   console.log('📨 Message received:', message);
-  console.log('🔧 Provider: grok, Model:', MODEL_NAME);
+  console.log('🔧 Provider: Groq, Model:', MODEL_NAME);
 
   if (!message) return res.status(400).json({ error: 'Message is required' });
 
   try {
-    const grokUrl = process.env.GROK_API_URL;
-    const grokKey = process.env.GROK_API_KEY;
-    
-    if (!grokUrl || !grokKey) {
-      throw new Error('Grok not configured. Set GROK_API_URL and GROK_API_KEY');
+    if (!GROQ_API_KEY) {
+      throw new Error('Groq API key not configured. Set GROQ_API_KEY environment variable');
     }
 
     const payload = {
@@ -143,21 +142,20 @@ router.post('/', async (req, res) => {
       max_tokens: 2000
     };
 
-    const grokResp = await axios.post(grokUrl, payload, {
+    const groqResp = await axios.post('https://api.groq.com/openai/v1/chat/completions', payload, {
       headers: {
-        'Authorization': `Bearer ${grokKey}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       timeout: 30000
     });
 
     let reply = '';
-    if (grokResp.data?.choices?.[0]?.message?.content) {
-      reply = formatResponse(grokResp.data.choices[0].message.content);
+    if (groqResp.data?.choices?.[0]?.message?.content) {
+      reply = formatResponse(groqResp.data.choices[0].message.content);
     }
 
-    console.log('✅ Grok replied');
+    console.log('✅ Groq replied');
     return res.json({ reply });
   } catch (err) {
     console.error('❌ Chatbot error:', err.response?.data || err.message || err);
