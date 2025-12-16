@@ -10,6 +10,10 @@ const API_BASE = (() => {
   return origin;
 })();
 
+// Keep a lightweight rolling history for chatbot context
+const chatHistory = [];
+const MAX_CHAT_HISTORY = 10; // pairs of user/assistant messages
+
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
@@ -373,7 +377,10 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
     const res = await fetch(`${API_BASE}/api/chatbot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({
+        message,
+        history: chatHistory.slice(-MAX_CHAT_HISTORY * 2)
+      })
     });
 
     const data = await res.json();
@@ -403,6 +410,10 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
       // Render the markdown response
       const htmlContent = md.render(data.reply);
       output.innerHTML = `<div class="chat-response-content">${htmlContent}</div>`;
+
+      // Persist conversation context
+      chatHistory.push({ role: 'user', content: message });
+      chatHistory.push({ role: 'assistant', content: data.reply });
 
       // Apply custom styling to specific elements
       output.querySelectorAll('table').forEach(table => {

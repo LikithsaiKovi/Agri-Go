@@ -121,7 +121,7 @@ Your goal: Deliver **high-impact, data-driven, and field-practical agricultural 
 
 // Handle POST requests
 router.post('/', async (req, res) => {
-  const { message } = req.body;
+  const { message, history = [] } = req.body;
 
   console.log('📨 Message received:', message);
   console.log('🔧 Provider: Groq, Model:', MODEL_NAME);
@@ -133,10 +133,17 @@ router.post('/', async (req, res) => {
       throw new Error('Groq API key not configured. Set GROQ_API_KEY environment variable');
     }
 
+    const sanitizedHistory = Array.isArray(history)
+      ? history
+          .filter(h => h && typeof h.content === 'string' && (h.role === 'user' || h.role === 'assistant'))
+          .slice(-20) // cap history to avoid token bloat
+      : [];
+
     const payload = {
       model: MODEL_NAME,
       messages: [
         { role: 'system', content: systemPrompt },
+        ...sanitizedHistory,
         { role: 'user', content: message }
       ],
       temperature: 0.85,
