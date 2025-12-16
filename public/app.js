@@ -268,7 +268,8 @@ document.getElementById('newsletter-form')?.addEventListener('submit', async (e)
   if (!email) return;
 
   try {
-  const res = await fetch('http://localhost:5050/api/newsletter', {
+  const apiUrl = window.location.origin;
+  const res = await fetch(`${apiUrl}/api/newsletter`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
@@ -296,7 +297,8 @@ document.getElementById('recommend-btn')?.addEventListener('click', async () => 
   resultEl.textContent = "🔄 Getting recommendations...";
 
   try {
-    const response = await fetch('http://localhost:5000/api/recommend-crop', {
+    const apiUrl = window.location.origin;
+    const response = await fetch(`${apiUrl}/api/recommend-crop`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ soil, climate })
@@ -318,7 +320,8 @@ document.getElementById('recommend-btn')?.addEventListener('click', async () => 
 });
 async function fetchSensorData() {
   try {
-    const res = await fetch('http://localhost:5000/api/iot-data');
+    const apiUrl = window.location.origin;
+    const res = await fetch(`${apiUrl}/api/iot-data`);
     const data = await res.json();
 
     document.getElementById('temperature').textContent = data.temperature?.toFixed(1) ?? '--';
@@ -363,7 +366,8 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
   output.innerHTML = `<div class="thinking">🧠 Thinking...</div>`;
 
   try {
-    const res = await fetch('http://localhost:5050/api/chatbot', {
+    const apiUrl = window.location.origin;
+    const res = await fetch(`${apiUrl}/api/chatbot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message })
