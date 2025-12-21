@@ -66,9 +66,11 @@ Modern agriculture faces critical challenges:
 
 ## 🚀 Key Features
 
-### 1. 🤖 AI Agricultural Assistant (NEW: Voice Input + Multi-Language + ML Yield Prediction!)
+### 1. 🤖 AI Agricultural Assistant (NEW: Voice Input + Multi-Language + ML Yield Prediction + Accuracy Improvements!)
 - **🎤 Voice Input**: Speak your questions naturally in any supported language
-- **Speech Recognition**: Real-time transcription with 85-95% accuracy
+- **Speech Recognition**: Real-time transcription with confidence scoring (0-100%)
+- **⚠️ Smart Confidence Thresholds**: Auto-retries low-confidence results (< 50%)
+- **✏️ Text Editing**: Users can review and edit recognized text before sending
 - **Multi-Language Support**: Ask questions in English, Telugu, Hindi, Tamil, Kannada, or Marathi
 - **Native Language Responses**: Get complete answers in your preferred language
 - **Real-time Expert Advice**: Powered by Groq's Mixtral-8x7B LLM
@@ -350,20 +352,56 @@ npm start
 ### Documentation:
 - 📘 [Complete Integration Guide](INTEGRATION_GUIDE.md)
 - 🚀 [Quick Start Guide](QUICKSTART.md)
+- 🎤 [Voice Feature Guide](VOICE_INPUT_GUIDE.md)
+- 🎯 [Voice Accuracy Improvements](VOICE_ACCURACY_IMPROVEMENTS.md)
+- 📱 [Voice User Experience Guide](VOICE_USER_EXPERIENCE.md)
+- 🔧 [Accuracy Solutions & Setup](VOICE_ACCURACY_GUIDE.md)
 - 🧪 [Testing Instructions](TEST_YIELD_INTEGRATION.md)
 - 🏗️ [Architecture Diagram](ARCHITECTURE_DIAGRAM.txt)
+
+---
+
+## � Recent Updates (Version 1.1.3)
+
+### ✨ Voice Recognition Accuracy Improvements
+- **Confidence Thresholds**: Auto-retry if confidence < 50%
+- **Text Editing**: Users can review and edit before sending
+- **Confidence Display**: Shows accuracy percentage (0-100%)
+- **Smart Retries**: Up to 3 automatic retry attempts
+- **Better Error Messages**: Clear guidance for each issue
+- **Voice Input Tips**: Language-specific best practices
+
+### 🔧 Technical Improvements
+- Added confidence score checking to Web Speech API
+- Implemented user-editable text confirmation UI
+- Enhanced error handling with recovery suggestions
+- Added voice input tips for non-English languages
+
+### 📚 Documentation
+- Comprehensive [VOICE_ACCURACY_IMPROVEMENTS.md](VOICE_ACCURACY_IMPROVEMENTS.md)
+- Detailed [VOICE_ACCURACY_GUIDE.md](VOICE_ACCURACY_GUIDE.md) with setup options
+- Visual [VOICE_USER_EXPERIENCE.md](VOICE_USER_EXPERIENCE.md) guide
+
+### 🚀 Available Solutions
+1. **Current Implementation** ✅ Text editing + confidence thresholds
+2. **Google Cloud API** 📖 90-95% accuracy (optional setup)
+3. **Azure Speech Services** 📖 92-96% accuracy (optional setup)
 
 ---
 
 ## 📝 Future Enhancements
 
 - [ ] Mobile app (React Native)
-- [ ] Multi-language support (Hindi, Telugu, Tamil)
+- [ ] Google Cloud Speech-to-Text integration (optional premium feature)
+- [ ] Azure Speech Services integration (optional premium feature)
+- [ ] Custom voice model trained on farmer dialects
 - [ ] Integration with government agricultural APIs
 - [ ] Drone imagery analysis for crop health
 - [ ] Marketplace for direct farmer-to-consumer sales
 - [ ] Blockchain-based supply chain tracking
 - [x] **ML Crop Yield Prediction** ✅ (Integrated!)
+- [x] **Voice Input Feature** ✅ (Integrated!)
+- [x] **Multi-Language Support** ✅ (6 languages)
 
 ---
 
