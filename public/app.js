@@ -383,6 +383,17 @@ const languageVoiceLabels = {
   'mr': 'मराठी'
 };
 
+// Voice recognition configuration
+const voiceConfig = {
+  confidenceThreshold: 0.5,  // Only accept results with >50% confidence
+  maxRetries: 3,              // Retry up to 3 times if confidence is low
+  retryTimeout: 2000,         // Wait 2 seconds before retry
+  displayConfidence: true     // Show confidence percentage
+};
+
+let voiceRetryCount = 0;
+let lastRecognitionConfidence = 0;
+
 // Initialize Web Speech API
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
@@ -392,10 +403,12 @@ if (SpeechRecognition) {
   recognition = new SpeechRecognition();
   recognition.continuous = false;
   recognition.interimResults = true;
+  recognition.maxAlternatives = 3;  // Get multiple alternatives for better accuracy
   
   recognition.onstart = () => {
     isListening = true;
-    updateVoiceStatus('🎤 Listening... Speak now!', 'listening');
+    voiceRetryCount = 0;
+    updateVoiceStatus('🎤 Listening... Speak clearly! (Avoid background noise)', 'listening');
     const voiceBtn = document.getElementById('voice-btn');
     voiceBtn?.classList.add('recording');
   };
@@ -403,9 +416,18 @@ if (SpeechRecognition) {
   recognition.onresult = (event) => {
     let interimTranscript = '';
     let finalTranscript = '';
+    let bestConfidence = 0;
+    let bestAlternative = '';
     
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const transcript = event.results[i][0].transcript;
+      const confidence = event.results[i][0].confidence;
+      
+      // Track best confidence
+      if (confidence > bestConfidence) {
+        bestConfidence = confidence;
+        bestAlternative = transcript;
+      }
       
       if (event.results[i].isFinal) {
         finalTranscript += transcript + ' ';
@@ -414,44 +436,86 @@ if (SpeechRecognition) {
       }
     }
     
+    lastRecognitionConfidence = bestConfidence;
     const chatInput = document.getElementById('chat-input');
+    
     if (finalTranscript) {
-      chatInput.value = finalTranscript.trim();
-      showRecognizedText(finalTranscript.trim());
+      const cleanTranscript = finalTranscript.trim();
+      chatInput.value = cleanTranscript;
+      
+      // Show confidence and options
+      if (voiceConfig.displayConfidence && bestConfidence < 0.8) {
+        showRecognizedText(
+          `📝 You said: "${cleanTranscript}"<br>` +
+          `<small>📊 Confidence: ${(bestConfidence * 100).toFixed(0)}%</small><br>` +
+          `<small style="color: #ff9800;">✏️ Edit above and click Ask, or use the voice button again</small>`
+        );
+      } else {
+        showRecognizedText(
+          `📝 You said: "${cleanTranscript}"<br>` +
+          `<small>✅ Confidence: ${(bestConfidence * 100).toFixed(0)}%</small>`
+        );
+      }
+      
+      // Auto-retry if confidence is too low
+      if (bestConfidence < voiceConfig.confidenceThreshold && voiceRetryCount < voiceConfig.maxRetries) {
+        voiceRetryCount++;
+        updateVoiceStatus(
+          `⚠️ Low confidence (${(bestConfidence * 100).toFixed(0)}%). Retrying... (${voiceRetryCount}/${voiceConfig.maxRetries})`,
+          'warning'
+        );
+        setTimeout(() => {
+          recognition.start();
+        }, voiceConfig.retryTimeout);
+      }
     } else if (interimTranscript) {
-      showRecognizedText(interimTranscript + ' (listening...)');
+      showRecognizedText(interimTranscript + ' 👂 (still listening...)');
     }
   };
   
   recognition.onerror = (event) => {
     let errorMsg = 'Error: ';
+    let errorType = 'error';
+    
     switch(event.error) {
       case 'network':
-        errorMsg += 'Network error. Please check your connection.';
+        errorMsg += 'Network error. Check your internet connection.';
         break;
       case 'no-speech':
-        errorMsg += 'No speech detected. Please try again.';
+        errorMsg += 'No speech detected. Please speak louder and try again. ';
+        if (voiceRetryCount < voiceConfig.maxRetries) {
+          errorMsg += `(Retry ${voiceRetryCount + 1}/${voiceConfig.maxRetries})`;
+          voiceRetryCount++;
+          setTimeout(() => recognition.start(), voiceConfig.retryTimeout);
+        }
         break;
       case 'audio-capture':
-        errorMsg += 'No microphone found. Please check your device.';
+        errorMsg += 'Microphone not found or not working. Check your device settings.';
         break;
       case 'not-allowed':
-        errorMsg += 'Microphone permission denied.';
+        errorMsg += 'Microphone permission denied. Enable microphone access in browser settings.';
+        break;
+      case 'service-not-allowed':
+        errorMsg += 'Speech recognition service not available in your country/region.';
         break;
       default:
         errorMsg += event.error;
     }
-    updateVoiceStatus(errorMsg, 'error');
+    
+    updateVoiceStatus(errorMsg, errorType);
   };
   
   recognition.onend = () => {
     isListening = false;
     const voiceBtn = document.getElementById('voice-btn');
     voiceBtn?.classList.remove('recording');
-    // Keep status visible for a moment
+    // Keep status visible longer for feedback
     setTimeout(() => {
-      document.getElementById('voice-status').style.display = 'none';
-    }, 2000);
+      const statusEl = document.getElementById('voice-status');
+      if (statusEl && !statusEl.innerHTML.includes('Error')) {
+        statusEl.style.display = 'none';
+      }
+    }, 3000);
   };
 }
 
@@ -465,14 +529,21 @@ function updateVoiceStatus(message, status = 'info') {
 function showRecognizedText(text) {
   const recognizedDiv = document.getElementById('recognized-text');
   const recognizedContent = document.getElementById('recognized-content');
-  recognizedContent.textContent = text;
+  recognizedContent.innerHTML = text;  // Use innerHTML to support HTML formatting
   recognizedDiv.style.display = 'block';
+  
+  // Make input editable so user can correct
+  const chatInput = document.getElementById('chat-input');
+  chatInput.focus();
 }
 
-// Voice button event listener
+// Voice button event listener with enhanced features
 document.getElementById('voice-btn')?.addEventListener('click', () => {
   if (!recognition) {
-    updateVoiceStatus('❌ Speech Recognition not supported in your browser. Try Chrome, Edge, or Safari.', 'error');
+    updateVoiceStatus(
+      '❌ Speech Recognition not supported. Use Chrome, Firefox, Safari, or Edge (latest versions).',
+      'error'
+    );
     return;
   }
   
@@ -482,9 +553,11 @@ document.getElementById('voice-btn')?.addEventListener('click', () => {
   
   if (isListening) {
     recognition.stop();
+    updateVoiceStatus('⏸️ Recording stopped. Review your text above.', 'info');
   } else {
     recognition.lang = voiceCode;
     document.getElementById('recognized-text').style.display = 'none';
+    voiceRetryCount = 0;
     recognition.start();
   }
 });
@@ -605,6 +678,39 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') modal.classList.add('hidden');
 });
 
+
+// Add voice accuracy tips and warnings
+document.addEventListener('DOMContentLoaded', () => {
+  // Show voice tips for non-English languages
+  const languageSelect = document.getElementById('chat-language');
+  const voiceTips = document.createElement('div');
+  voiceTips.id = 'voice-tips';
+  voiceTips.innerHTML = `
+    <div style="background: rgba(255, 152, 0, 0.1); border-left: 4px solid #FF9800; padding: 0.8rem; 
+                margin-bottom: 1rem; border-radius: 0.3rem; font-size: 0.9rem; display: none;">
+      <strong>💡 Voice Input Tips for Better Accuracy:</strong><br>
+      • <strong>Speak clearly and slowly</strong> - Proper pronunciation helps recognition<br>
+      • <strong>Minimize background noise</strong> - Use a quiet environment<br>
+      • <strong>Use a good microphone</strong> - Higher quality input = better results<br>
+      • <strong>Use standard language</strong> - Regional accents may need multiple tries<br>
+      • <strong>Review before sending</strong> - Check recognized text and edit if needed<br>
+      • <strong>If accuracy is still low</strong> - Use text input instead for important queries
+    </div>
+  `;
+  
+  const chatForm = document.getElementById('chat-form');
+  if (chatForm && languageSelect) {
+    chatForm.parentElement.insertBefore(voiceTips, chatForm);
+    
+    // Show tips for non-English, hide for English
+    const updateTipsVisibility = () => {
+      voiceTips.style.display = languageSelect.value !== 'en' ? 'block' : 'none';
+    };
+    
+    updateTipsVisibility();
+    languageSelect.addEventListener('change', updateTipsVisibility);
+  }
+});
 
 const cardData = {
   facial: {
