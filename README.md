@@ -350,14 +350,10 @@ npm start
 ```
 
 ### Documentation:
-- 📘 [Complete Integration Guide](INTEGRATION_GUIDE.md)
+- 📘 [Integration Guide](INTEGRATION_GUIDE.md)
 - 🚀 [Quick Start Guide](QUICKSTART.md)
 - 🎤 [Voice Feature Guide](VOICE_INPUT_GUIDE.md)
-- 🎯 [Voice Accuracy Improvements](VOICE_ACCURACY_IMPROVEMENTS.md)
-- 📱 [Voice User Experience Guide](VOICE_USER_EXPERIENCE.md)
-- 🔧 [Accuracy Solutions & Setup](VOICE_ACCURACY_GUIDE.md)
 - 🧪 [Testing Instructions](TEST_YIELD_INTEGRATION.md)
-- 🏗️ [Architecture Diagram](ARCHITECTURE_DIAGRAM.txt)
 
 ---
 
