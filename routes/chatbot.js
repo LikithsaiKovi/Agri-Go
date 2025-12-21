@@ -204,9 +204,19 @@ Follow these strict guidelines:
 
 Your goal: Deliver **high-impact, data-driven, and field-practical agricultural advice** that can be immediately applied by a farmer or agritech user.`;
 
+// Language-specific instructions
+const languageInstructions = {
+  'en': '',
+  'te': '\n\n**IMPORTANT: Respond ENTIRELY in Telugu (తెలుగు). Use Telugu script for all text including numbers, units, and technical terms. Maintain the same professional quality and formatting.**',
+  'hi': '\n\n**IMPORTANT: Respond ENTIRELY in Hindi (हिंदी). Use Devanagari script for all text including numbers, units, and technical terms. Maintain the same professional quality and formatting.**',
+  'ta': '\n\n**IMPORTANT: Respond ENTIRELY in Tamil (தமிழ்). Use Tamil script for all text including numbers, units, and technical terms. Maintain the same professional quality and formatting.**',
+  'kn': '\n\n**IMPORTANT: Respond ENTIRELY in Kannada (ಕನ್ನಡ). Use Kannada script for all text including numbers, units, and technical terms. Maintain the same professional quality and formatting.**',
+  'mr': '\n\n**IMPORTANT: Respond ENTIRELY in Marathi (मराठी). Use Devanagari script for all text including numbers, units, and technical terms. Maintain the same professional quality and formatting.**'
+};
+
 // Handle POST requests
 router.post('/', async (req, res) => {
-  const { message, history = [] } = req.body;
+  const { message, history = [], language = 'en' } = req.body;
 
   console.log('📨 Message received:', message);
   console.log('🔧 Provider: Groq, Model:', MODEL_NAME);
@@ -252,10 +262,16 @@ router.post('/', async (req, res) => {
           .slice(-20) // cap history to avoid token bloat
       : [];
 
+    // Get language-specific system prompt
+    const languageInstruction = languageInstructions[language] || '';
+    const finalSystemPrompt = systemPrompt + languageInstruction;
+    
+    console.log('🌐 Selected language:', language);
+
     const payload = {
       model: MODEL_NAME,
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: finalSystemPrompt },
         ...sanitizedHistory,
         { role: 'user', content: enhancedMessage }
       ],

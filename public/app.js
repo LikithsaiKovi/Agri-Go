@@ -362,12 +362,31 @@ document.getElementById('yield-form')?.addEventListener('submit', (e) => {
   resultEl.textContent = `✅ Estimated Yield for ${crop}: ${inTons.toFixed(2)} tons (${estimated.toFixed(0)} kg)`;
   resultEl.style.color = 'green';
 });
+
+// Language selector - Update placeholder based on selected language
+const languagePlaceholders = {
+  'en': 'Ask a farming question...',
+  'te': 'వ్యవసాయ ప్రశ్న అడగండి...',
+  'hi': 'खेती का प्रश्न पूछें...',
+  'ta': 'விவசாய கேள்வி கேளுங்கள்...',
+  'kn': 'ಕೃಷಿ ಪ್ರಶ್ನೆ ಕೇಳಿ...',
+  'mr': 'शेती प्रश्न विचारा...'
+};
+
+document.getElementById('chat-language')?.addEventListener('change', (e) => {
+  const input = document.getElementById('chat-input');
+  const selectedLang = e.target.value;
+  input.placeholder = languagePlaceholders[selectedLang] || languagePlaceholders['en'];
+});
+
 document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const input = document.getElementById('chat-input');
   const output = document.getElementById('chat-response');
+  const languageSelect = document.getElementById('chat-language');
   const message = input.value.trim();
+  const selectedLanguage = languageSelect?.value || 'en';
 
   if (!message) return;
 
@@ -379,6 +398,7 @@ document.getElementById('chat-form')?.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message,
+        language: selectedLanguage,
         history: chatHistory.slice(-MAX_CHAT_HISTORY * 2)
       })
     });
