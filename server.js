@@ -46,6 +46,23 @@ app.post('/get-weather', async (req, res) => {
   }
 });
 
+// Route to connect to ML API for crop yield prediction
+app.post('/api/predict-yield', async (req, res) => {
+  try {
+    const ML_API_URL = process.env.ML_API_URL || 'http://127.0.0.1:5000';
+    const response = await axios.post(`${ML_API_URL}/predict-yield`, req.body, {
+      timeout: 10000
+    });
+    res.json(response.data);
+  } catch (err) {
+    console.error('ML API yield prediction error:', err.message);
+    res.status(500).json({
+      success: false,
+      error: 'ML API is unavailable. Please ensure the ML service is running.'
+    });
+  }
+});
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {

@@ -19,7 +19,8 @@ Modern agriculture faces critical challenges:
 
 **Agri-AI** is a comprehensive smart farming platform that leverages:
 - 🤖 **AI-Powered Chatbot** - 24/7 expert agricultural advice using Groq LLM
-- 🌤️ **Weather Prediction** - ML-based forecasting for informed planting decisions
+- � **ML Crop Yield Prediction** - Integrated ML model predicts yields with 85-95% confidence
+- �🌤️ **Weather Prediction** - ML-based forecasting for informed planting decisions
 - 🌱 **Crop Recommendation System** - Soil & climate analysis for optimal crop selection
 - 📊 **IoT Dashboard** - Real-time monitoring of temperature, humidity, and soil moisture
 - 📰 **Knowledge Base** - Educational resources and farming best practices
@@ -64,8 +65,11 @@ Modern agriculture faces critical challenges:
 
 ## 🚀 Key Features
 
-### 1. 🤖 AI Agricultural Assistant
+### 1. 🤖 AI Agricultural Assistant (NEW: Integrated ML Yield Prediction!)
 - **Real-time Expert Advice**: Powered by Groq's Mixtral-8x7B LLM
+- **ML Yield Predictions**: Automatically predicts crop yields when users ask about production
+- **Smart Detection**: Identifies yield queries and extracts parameters from natural language
+- **Confidence Scoring**: Provides 85-95% confidence predictions with risk assessment
 - **Context-Aware Responses**: Understands farming terminology and regional practices
 - **Instant Solutions**: Get answers on pest control, soil management, irrigation, etc.
 
@@ -216,13 +220,42 @@ PORT=8080
 
 ## 🔧 API Endpoints
 
-### Chatbot
+### Chatbot (with ML Yield Integration!)
 ```http
 POST /api/chatbot
 Content-Type: application/json
 
 {
-  "message": "What's the best fertilizer for rice crops?"
+  "message": "What yield can I expect from 10 hectares of wheat?",
+  "history": []
+}
+
+Response: {
+  "reply": "Based on ML analysis: Predicted Yield: 47 tons (47,000 kg)..."
+}
+```
+
+### Crop Yield Prediction
+```http
+POST /api/predict-yield
+Content-Type: application/json
+
+{
+  "crop": "wheat",
+  "area": 10,
+  "temperature": 22,
+  "rainfall": 600,
+  "soil_type": "loamy",
+  "fertilizer": 120,
+  "irrigation": "drip"
+}
+
+Response: {
+  "success": true,
+  "total_yield_tons": 47.0,
+  "confidence": 0.92,
+  "risk_level": "Low",
+  "recommendations": [...]
 }
 ```
 
@@ -272,6 +305,51 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
+## 🌾 NEW: ML Crop Yield Integration
+
+**What's New:**  
+The chatbot now seamlessly integrates with a machine learning crop yield prediction model!
+
+### How It Works:
+1. **Natural Language Detection** - Chatbot automatically detects when you ask about yields
+2. **Smart Parameter Extraction** - Extracts crop type, area, conditions from your message
+3. **ML Prediction** - Calls Flask ML API for accurate yield forecasts
+4. **Enhanced Response** - Combines ML data with Groq's agricultural expertise
+
+### Example Queries:
+```
+✅ "What yield can I expect from 10 hectares of wheat?"
+✅ "I have 15 hectares of rice with loamy soil, 28°C temperature. What's my production?"
+✅ "Compare maize and wheat yield for 20 hectares"
+```
+
+### Features:
+- 🎯 **85-95% Confidence** predictions
+- 📊 **5 Environmental Factors** analyzed (temperature, rainfall, soil, fertilizer, irrigation)
+- 🌾 **11 Crop Types** supported
+- ⚠️ **Risk Assessment** (Low/Medium/High)
+- 💡 **Actionable Recommendations**
+
+### Quick Start:
+```bash
+# Terminal 1 - Start ML API
+cd ml_api
+python app.py
+
+# Terminal 2 - Start Backend
+npm start
+
+# Open browser: http://localhost:5050
+```
+
+### Documentation:
+- 📘 [Complete Integration Guide](INTEGRATION_GUIDE.md)
+- 🚀 [Quick Start Guide](QUICKSTART.md)
+- 🧪 [Testing Instructions](TEST_YIELD_INTEGRATION.md)
+- 🏗️ [Architecture Diagram](ARCHITECTURE_DIAGRAM.txt)
+
+---
+
 ## 📝 Future Enhancements
 
 - [ ] Mobile app (React Native)
@@ -280,6 +358,7 @@ Contributions are welcome! Please follow these steps:
 - [ ] Drone imagery analysis for crop health
 - [ ] Marketplace for direct farmer-to-consumer sales
 - [ ] Blockchain-based supply chain tracking
+- [x] **ML Crop Yield Prediction** ✅ (Integrated!)
 
 ---
 

@@ -2,10 +2,95 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
+// ML API URL
+const ML_API_URL = process.env.ML_API_URL || 'http://127.0.0.1:5000';
+
 // Use Groq as default provider (much faster and cheaper than OpenAI)
 const MODEL_NAME = process.env.MODEL_NAME || 'mixtral-8x7b-32768';
 const GROQ_API_KEY = process.env.GROK_API_KEY || process.env.GROQ_API_KEY; // Support both env var names
 const GROQ_API_URL = process.env.GROQ_API_URL || 'https://api.groq.com/openai/v1';
+
+// Function to detect if user is asking about crop yield prediction
+function detectYieldQuery(message) {
+  const yieldKeywords = [
+    'yield', 'production', 'harvest', 'how much will i get', 'how much can i produce',
+    'expected output', 'crop output', 'ton', 'kg', 'quintals', 'estimate',
+    'predict my yield', 'production estimate', 'how much will grow'
+  ];
+  
+  const messageLower = message.toLowerCase();
+  return yieldKeywords.some(keyword => messageLower.includes(keyword));
+}
+
+// Function to extract yield parameters from user message
+function extractYieldParams(message) {
+  const params = {};
+  const messageLower = message.toLowerCase();
+  
+  // Extract crop type
+  const crops = ['wheat', 'rice', 'maize', 'corn', 'soybean', 'cotton', 'sugarcane', 'potato', 'tomato', 'millet', 'barley'];
+  for (const crop of crops) {
+    if (messageLower.includes(crop)) {
+      params.crop = crop;
+      break;
+    }
+  }
+  
+  // Extract area (hectares or acres)
+  const areaMatch = messageLower.match(/(\d+\.?\d*)\s*(hectare|hectares|acre|acres|ha)/i);
+  if (areaMatch) {
+    let area = parseFloat(areaMatch[1]);
+    if (areaMatch[2].toLowerCase().includes('acre')) {
+      area = area * 0.404686; // Convert acres to hectares
+    }
+    params.area = area;
+  }
+  
+  // Extract temperature
+  const tempMatch = messageLower.match(/(\d+\.?\d*)\s*(°c|celsius|degrees)/i);
+  if (tempMatch) {
+    params.temperature = parseFloat(tempMatch[1]);
+  }
+  
+  // Extract rainfall
+  const rainfallMatch = messageLower.match(/(\d+)\s*mm/i);
+  if (rainfallMatch) {
+    params.rainfall = parseFloat(rainfallMatch[1]);
+  }
+  
+  // Extract soil type
+  const soilTypes = ['loamy', 'clay', 'sandy', 'silt', 'black', 'red'];
+  for (const soil of soilTypes) {
+    if (messageLower.includes(soil)) {
+      params.soil_type = soil;
+      break;
+    }
+  }
+  
+  // Extract irrigation type
+  const irrigationTypes = ['drip', 'sprinkler', 'flood', 'rainfed'];
+  for (const irrigation of irrigationTypes) {
+    if (messageLower.includes(irrigation)) {
+      params.irrigation = irrigation;
+      break;
+    }
+  }
+  
+  return params;
+}
+
+// Function to call ML API for yield prediction
+async function getPrediction(params) {
+  try {
+    const response = await axios.post(`${ML_API_URL}/predict-yield`, params, {
+      timeout: 10000
+    });
+    return response.data;
+  } catch (error) {
+    console.error('ML API error:', error.message);
+    return null;
+  }
+}
 
 // Function to format response with clean table structure
 function formatResponse(text) {
@@ -132,6 +217,34 @@ router.post('/', async (req, res) => {
     if (!GROQ_API_KEY) {
       throw new Error('Groq API key not configured. Set GROQ_API_KEY environment variable');
     }
+    
+    // Check if this is a yield prediction query
+    let mlPrediction = null;
+    let enhancedMessage = message;
+    
+    if (detectYieldQuery(message)) {
+      console.log('🌾 Yield query detected, calling ML API...');
+      const params = extractYieldParams(message);
+      mlPrediction = await getPrediction(params);
+      
+      if (mlPrediction && mlPrediction.success) {
+        console.log('✅ ML prediction received:', mlPrediction);
+        // Enhance the message with ML prediction data for Groq to incorporate
+        enhancedMessage = `${message}\n\n[ML Model Prediction Data - Use this to enhance your response]:\n` +
+          `- Crop: ${mlPrediction.crop}\n` +
+          `- Area: ${mlPrediction.area_hectares} hectares\n` +
+          `- Predicted Yield: ${mlPrediction.total_yield_tons} tons (${mlPrediction.total_yield_kg} kg)\n` +
+          `- Yield per Hectare: ${mlPrediction.yield_per_hectare} tons/ha\n` +
+          `- Confidence: ${(mlPrediction.confidence * 100).toFixed(0)}%\n` +
+          `- Risk Level: ${mlPrediction.risk_level}\n` +
+          `- Impact Factors: Temperature ${mlPrediction.factors.temperature_impact}%, ` +
+          `Rainfall ${mlPrediction.factors.rainfall_impact}%, ` +
+          `Soil ${mlPrediction.factors.soil_impact}%\n` +
+          `- Recommendations: ${mlPrediction.recommendations.join('; ')}\n\n` +
+          `Please provide a comprehensive agricultural response that incorporates this ML prediction data. ` +
+          `Format the prediction results clearly with the yield numbers, confidence level, and actionable recommendations.`;
+      }
+    }
 
     const sanitizedHistory = Array.isArray(history)
       ? history
@@ -144,10 +257,10 @@ router.post('/', async (req, res) => {
       messages: [
         { role: 'system', content: systemPrompt },
         ...sanitizedHistory,
-        { role: 'user', content: message }
+        { role: 'user', content: enhancedMessage }
       ],
       temperature: 0.85,
-      max_tokens: 2000
+      max_tokens: 2500
     };
 
     const groqResp = await axios.post(`${GROQ_API_URL}/chat/completions`, payload, {
