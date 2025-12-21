@@ -509,9 +509,21 @@
         </div>
         
         <div id="chat-window" class="chat-window" aria-live="polite"></div>
+        
+        <!-- Recognized Text Display -->
+        <div id="recognized-text" class="recognized-text" style="display:none;">
+          <strong>📝 You said:</strong> <span id="recognized-content"></span>
+        </div>
+        
      <form id="chat-form">
-  <input type="text" id="chat-input" placeholder="Ask a farming question" required />
-  <button type="submit">Ask</button>
+  <div class="chat-input-group">
+    <input type="text" id="chat-input" placeholder="Ask a farming question" required />
+    <button type="button" id="voice-btn" class="voice-btn" title="Click to speak or hold for continuous listening">
+      🎤 Voice
+    </button>
+    <button type="submit" class="submit-btn">Ask</button>
+  </div>
+  <div id="voice-status" class="voice-status" style="display:none;"></div>
 </form>
 <div id="chat-response"></div>
 

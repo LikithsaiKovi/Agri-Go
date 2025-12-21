@@ -363,6 +363,132 @@ document.getElementById('yield-form')?.addEventListener('submit', (e) => {
   resultEl.style.color = 'green';
 });
 
+// ===================== Voice Input Implementation =====================
+// Language codes for Web Speech API
+const languageVoiceCodes = {
+  'en': 'en-US',
+  'te': 'te-IN',
+  'hi': 'hi-IN',
+  'ta': 'ta-IN',
+  'kn': 'kn-IN',
+  'mr': 'mr-IN'
+};
+
+const languageVoiceLabels = {
+  'en': 'English',
+  'te': 'తెలుగు',
+  'hi': 'हिंदी',
+  'ta': 'தமிழ்',
+  'kn': 'ಕನ್ನಡ',
+  'mr': 'मराठी'
+};
+
+// Initialize Web Speech API
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let isListening = false;
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  
+  recognition.onstart = () => {
+    isListening = true;
+    updateVoiceStatus('🎤 Listening... Speak now!', 'listening');
+    const voiceBtn = document.getElementById('voice-btn');
+    voiceBtn?.classList.add('recording');
+  };
+  
+  recognition.onresult = (event) => {
+    let interimTranscript = '';
+    let finalTranscript = '';
+    
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript + ' ';
+      } else {
+        interimTranscript += transcript;
+      }
+    }
+    
+    const chatInput = document.getElementById('chat-input');
+    if (finalTranscript) {
+      chatInput.value = finalTranscript.trim();
+      showRecognizedText(finalTranscript.trim());
+    } else if (interimTranscript) {
+      showRecognizedText(interimTranscript + ' (listening...)');
+    }
+  };
+  
+  recognition.onerror = (event) => {
+    let errorMsg = 'Error: ';
+    switch(event.error) {
+      case 'network':
+        errorMsg += 'Network error. Please check your connection.';
+        break;
+      case 'no-speech':
+        errorMsg += 'No speech detected. Please try again.';
+        break;
+      case 'audio-capture':
+        errorMsg += 'No microphone found. Please check your device.';
+        break;
+      case 'not-allowed':
+        errorMsg += 'Microphone permission denied.';
+        break;
+      default:
+        errorMsg += event.error;
+    }
+    updateVoiceStatus(errorMsg, 'error');
+  };
+  
+  recognition.onend = () => {
+    isListening = false;
+    const voiceBtn = document.getElementById('voice-btn');
+    voiceBtn?.classList.remove('recording');
+    // Keep status visible for a moment
+    setTimeout(() => {
+      document.getElementById('voice-status').style.display = 'none';
+    }, 2000);
+  };
+}
+
+function updateVoiceStatus(message, status = 'info') {
+  const statusEl = document.getElementById('voice-status');
+  statusEl.innerHTML = message;
+  statusEl.className = `voice-status ${status}`;
+  statusEl.style.display = 'block';
+}
+
+function showRecognizedText(text) {
+  const recognizedDiv = document.getElementById('recognized-text');
+  const recognizedContent = document.getElementById('recognized-content');
+  recognizedContent.textContent = text;
+  recognizedDiv.style.display = 'block';
+}
+
+// Voice button event listener
+document.getElementById('voice-btn')?.addEventListener('click', () => {
+  if (!recognition) {
+    updateVoiceStatus('❌ Speech Recognition not supported in your browser. Try Chrome, Edge, or Safari.', 'error');
+    return;
+  }
+  
+  const languageSelect = document.getElementById('chat-language');
+  const selectedLang = languageSelect?.value || 'en';
+  const voiceCode = languageVoiceCodes[selectedLang];
+  
+  if (isListening) {
+    recognition.stop();
+  } else {
+    recognition.lang = voiceCode;
+    document.getElementById('recognized-text').style.display = 'none';
+    recognition.start();
+  }
+});
+
 // Language selector - Update placeholder based on selected language
 const languagePlaceholders = {
   'en': 'Ask a farming question...',

@@ -18,7 +18,9 @@ Modern agriculture faces critical challenges:
 ## ✨ Our Solution
 
 **Agri-AI** is a comprehensive smart farming platform that leverages:
-- 🤖 **AI-Powered Chatbot** - 24/7 expert agricultural advice using Groq LLM- 🌐 **Multi-Language Support** - Supports 6 languages (English, Telugu, Hindi, Tamil, Kannada, Marathi)- � **ML Crop Yield Prediction** - Integrated ML model predicts yields with 85-95% confidence
+- 🎤 **Voice-Enabled AI Chatbot** - Speak naturally in your language, get instant farming advice
+- 🌐 **Multi-Language Support** - Supports 6 languages (English, Telugu, Hindi, Tamil, Kannada, Marathi)
+- 🌾 **ML Crop Yield Prediction** - Integrated ML model predicts yields with 85-95% confidence
 - �🌤️ **Weather Prediction** - ML-based forecasting for informed planting decisions
 - 🌱 **Crop Recommendation System** - Soil & climate analysis for optimal crop selection
 - 📊 **IoT Dashboard** - Real-time monitoring of temperature, humidity, and soil moisture
@@ -64,7 +66,9 @@ Modern agriculture faces critical challenges:
 
 ## 🚀 Key Features
 
-### 1. 🤖 AI Agricultural Assistant (NEW: Multi-Language + ML Yield Prediction!)
+### 1. 🤖 AI Agricultural Assistant (NEW: Voice Input + Multi-Language + ML Yield Prediction!)
+- **🎤 Voice Input**: Speak your questions naturally in any supported language
+- **Speech Recognition**: Real-time transcription with 85-95% accuracy
 - **Multi-Language Support**: Ask questions in English, Telugu, Hindi, Tamil, Kannada, or Marathi
 - **Native Language Responses**: Get complete answers in your preferred language
 - **Real-time Expert Advice**: Powered by Groq's Mixtral-8x7B LLM
